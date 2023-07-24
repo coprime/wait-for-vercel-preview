@@ -203,6 +203,7 @@ const waitForDeploymentToStart = async ({
   actorName = 'vercel[bot]',
   maxTimeout = 20,
   checkIntervalInMilliseconds = 2000,
+  VERCEL_TOKEN
 }) => {
   const iterations = calculateIterations(
     maxTimeout,
@@ -210,6 +211,18 @@ const waitForDeploymentToStart = async ({
   );
 
   for (let i = 0; i < iterations; i++) {
+    try {
+      const vercelDeps = await fetch("https://api.vercel.com/v6/deployments", {
+        "headers": {
+          "Authorization": `Bearer ${VERCEL_TOKEN}`
+        },
+        "method": "get"
+      })
+      console.log('vercelDeps', vercelDeps)
+
+    } catch (e) {
+      console.error(e)
+    }
     try {
       const deployments = await octokit.rest.repos.listDeployments({
         owner,
@@ -302,6 +315,15 @@ const run = async () => {
 
     const octokit = github.getOctokit(GITHUB_TOKEN);
 
+    const orgName = 'coprime'
+    const VERCEL_TOKEN = await octokit.request(`GET /orgs/${orgName}/actions/secrets/VERCEL_TOKEN`, {
+      org: 'ORG',
+      secret_name: 'VERCEL_TOKEN',
+      headers: {
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
+    })
+
     const context = github.context;
     const owner = context.repo.owner;
     const repo = context.repo.repo;
@@ -337,6 +359,7 @@ const run = async () => {
       actorName: 'vercel[bot]',
       maxTimeout: MAX_TIMEOUT,
       checkIntervalInMilliseconds: CHECK_INTERVAL_IN_MS,
+      VERCEL_TOKEN,
     });
 
     if (!deployments) {
