@@ -212,18 +212,18 @@ const waitForDeploymentToStart = async ({
 
   const VERCEL_TEAM = 'coprime'
   for (let i = 0; i < iterations; i++) {
-    try {
-      const vercelDeps = await fetch(`https://api.vercel.com/v6/deployments?teamId=${VERCEL_TEAM}`, {
-        "headers": {
-          "Authorization": `Bearer ${VERCEL_TOKEN}`
-        },
-        "method": "get"
-      })
-      console.log('vercelDeps', vercelDeps)
+    // try {
+    //   const vercelDeps = await fetch(`https://api.vercel.com/v6/deployments?teamId=${VERCEL_TEAM}`, {
+    //     "headers": {
+    //       "Authorization": `Bearer ${VERCEL_TOKEN}`
+    //     },
+    //     "method": "get"
+    //   })
+    //   console.log('vercelDeps', vercelDeps)
 
-    } catch (e) {
-      console.error('error in vercel call', e)
-    }
+    // } catch (e) {
+    //   console.error('error in vercel call', e)
+    // }
     try {
       const deployments = await octokit.rest.repos.listDeployments({
         owner,
@@ -472,13 +472,13 @@ const run = async () => {
     // Wait for url to respond with a success
     // console.log(`Waiting for a status code 200 from: ${targetUrl}`);
 
-    await waitForUrl({
-      url: targetUrl,
-      maxTimeout: MAX_TIMEOUT,
-      checkIntervalInMilliseconds: CHECK_INTERVAL_IN_MS,
-      vercelPassword: VERCEL_PASSWORD,
-      path: PATH,
-    });
+    // await waitForUrl({
+    //   url: targetUrl,
+    //   maxTimeout: MAX_TIMEOUT,
+    //   checkIntervalInMilliseconds: CHECK_INTERVAL_IN_MS,
+    //   vercelPassword: VERCEL_PASSWORD,
+    //   path: PATH,
+    // });
   } catch (error) {
     core.setFailed(error.message);
   }
