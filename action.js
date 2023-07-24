@@ -220,18 +220,18 @@ const waitForDeploymentToStart = async ({
       core.setOutput('deployments', deployments);
       console.log({ sha, owner, repo, environment })
 
-      const deployment =
+      const vercelDeployments =
         deployments.data.length > 0 &&
-        deployments.data.find((deployment) => {
+        deployments.data.filter((deployment) => {
           return deployment.creator.login === actorName;
         });
-      core.setOutput('deployment', deployment);
+      core.setOutput('deployment', vercelDeployments);
       // console.log('creator', deployments.data?.[0]?.creator?.login)
       // console.log('creator stringified', JSON.stringify(deployments?.data?.[0]?.creator))
-      // console.log('deployments', JSON.stringify(deployments.data, null, 2))
+      console.log('deployments', JSON.stringify(vercelDeployments, null, 2))
 
-      if (deployments.data.length > 0) {
-        console.log('deployments', JSON.stringify(deployments.data, null, 2))
+      if (vercelDeployments.length > 0) {
+        console.log('vercelDeployments', JSON.stringify(vercelDeployments, null, 2))
         return deployments;
       }
 
