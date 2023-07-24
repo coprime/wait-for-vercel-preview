@@ -232,11 +232,12 @@ const waitForDeploymentToStart = async ({
           return deployment.creator.login === actorName;
         });
       core.setOutput('deployment', deployment);
-      console.log('creator', deployments.data?.[0]?.creator?.login)
-      console.log('creator stringified', JSON.stringify(deployments?.data?.[0]?.creator))
-      console.log('deployments', JSON.stringify(deployments, null, 2))
+      // console.log('creator', deployments.data?.[0]?.creator?.login)
+      // console.log('creator stringified', JSON.stringify(deployments?.data?.[0]?.creator))
+      // console.log('deployments', JSON.stringify(deployments.data, null, 2))
 
-      if (deployments.length > 2) {
+      if (deployments.data.length > 0) {
+        console.log('deployments', JSON.stringify(deployments.data, null, 2))
         return deployments;
       }
 
@@ -336,7 +337,7 @@ const run = async () => {
       octokit,
       owner,
       repo,
-      sha: sha,
+      sha,
       environment: ENVIRONMENT,
       actorName: 'vercel[bot]',
       maxTimeout: MAX_TIMEOUT,
@@ -347,6 +348,7 @@ const run = async () => {
       core.setFailed('no vercel deployment found, exiting...');
       return;
     }
+    console.log('determined deployments', deployments)
 
 
     const status1 = await waitForStatus({
