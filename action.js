@@ -226,12 +226,14 @@ const waitForDeploymentToStart = async ({
         });
       core.setOutput('deployment', deployment);
 
-      if (deployments.length > 1) {
+
+      if (deployments.length > 2) {
+        console.log('deployments', deployments)
         return deployments;
       }
 
       console.log(
-        `Could not find any deployments for actor ${actorName}, retrying (attempt ${
+        `Could not find any jareds for actor ${actorName}, retrying (attempt ${
           i + 1
         } / ${iterations})`
       );
