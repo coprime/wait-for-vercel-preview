@@ -219,6 +219,7 @@ const waitForDeploymentToStart = async ({
       });
       core.setOutput('deployments', deployments);
       console.log({ sha, owner, repo, environment })
+      console.log('all deployments', deployments)
 
       const vercelDeployments =
         deployments.data.length > 0 &&
@@ -228,7 +229,7 @@ const waitForDeploymentToStart = async ({
       core.setOutput('deployment', vercelDeployments);
       // console.log('creator', deployments.data?.[0]?.creator?.login)
       // console.log('creator stringified', JSON.stringify(deployments?.data?.[0]?.creator))
-      console.log('deployments', JSON.stringify(vercelDeployments, null, 2))
+      console.log('vercelDeployments', JSON.stringify(vercelDeployments, null, 2))
 
       if (vercelDeployments.length > 0) {
         console.log('vercelDeployments', JSON.stringify(vercelDeployments, null, 2))
