@@ -210,9 +210,10 @@ const waitForDeploymentToStart = async ({
     checkIntervalInMilliseconds
   );
 
+  const VERCEL_TEAM = 'coprime'
   for (let i = 0; i < iterations; i++) {
     try {
-      const vercelDeps = await fetch("https://api.vercel.com/v6/deployments", {
+      const vercelDeps = await fetch(`https://api.vercel.com/v6/deployments?teamId=${VERCEL_TEAM}`, {
         "headers": {
           "Authorization": `Bearer ${VERCEL_TOKEN}`
         },
@@ -221,7 +222,7 @@ const waitForDeploymentToStart = async ({
       console.log('vercelDeps', vercelDeps)
 
     } catch (e) {
-      console.error(e)
+      console.error('error in vercel call', e)
     }
     try {
       const deployments = await octokit.rest.repos.listDeployments({
