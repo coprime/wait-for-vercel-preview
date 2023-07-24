@@ -307,6 +307,7 @@ const run = async () => {
     // Inputs
     const GITHUB_TOKEN = core.getInput('token', { required: true });
     const VERCEL_PASSWORD = core.getInput('vercel_password');
+    const VERCEL_TOKEN = core.getInput('vercel_token');
     const ENVIRONMENT = core.getInput('environment');
     const MAX_TIMEOUT = Number(core.getInput('max_timeout')) || 60;
     const ALLOW_INACTIVE = Boolean(core.getInput('allow_inactive')) || false;
@@ -321,14 +322,14 @@ const run = async () => {
 
     const octokit = github.getOctokit(GITHUB_TOKEN);
 
-    const orgName = 'coprime'
-    const VERCEL_TOKEN = await octokit.request(`GET /orgs/${orgName}/actions/secrets/VERCEL_TOKEN`, {
-      org: 'ORG',
-      secret_name: 'VERCEL_TOKEN',
-      headers: {
-        'X-GitHub-Api-Version': '2022-11-28'
-      }
-    })
+    // const orgName = 'coprime'
+    // const VERCEL_TOKEN = await octokit.request(`GET /orgs/${orgName}/actions/secrets/VERCEL_TOKEN`, {
+    //   org: 'ORG',
+    //   secret_name: 'VERCEL_TOKEN',
+    //   headers: {
+    //     'X-GitHub-Api-Version': '2022-11-28'
+    //   }
+    // })
 
     const context = github.context;
     const owner = context.repo.owner;

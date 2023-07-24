@@ -7,6 +7,9 @@ inputs:
   token:
     description: 'The Github Secret'
     required: true
+  vercel_token:
+    description: 'The Vercel Token'
+    required: true
   max_timeout:
     description: 'The max time to run the action'
     required: false
