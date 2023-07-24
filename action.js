@@ -226,7 +226,7 @@ const waitForDeploymentToStart = async ({
         });
       core.setOutput('deployment', deployment);
 
-      if (deployments) {
+      if (deployments.length > 1) {
         return deployments;
       }
 
@@ -367,7 +367,7 @@ const run = async () => {
       return;
     }
 
-    console.log('target url »', targetUrl);
+    console.log('target url1 »', targetUrl);
     console.log('target url2 »', targetUrl2);
 
     // Set output
