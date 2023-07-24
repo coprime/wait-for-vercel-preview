@@ -231,7 +231,7 @@ const waitForDeploymentToStart = async ({
           return deployment.creator.login === actorName;
         });
       core.setOutput('deployment', deployment);
-
+      console.log('deployments', deployments)
 
       if (deployments.length > 2) {
         console.log('deployments', deployments)

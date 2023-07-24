@@ -11,7 +11,8 @@
     "test": "jest --watch",
     "test:ci": "jest --ci",
     "test:ci:coverage": "jest --ci --collect-coverage  --silent",
-    "build": "ncc build index.js -o dist"
+    "build": "ncc build index.js -o dist",
+    "push": "pnpm run build && git add -A && git commit -m 'new version' && git push origin main"
   },
   "keywords": [],
   "author": "",
