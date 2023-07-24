@@ -224,6 +224,7 @@ const waitForDeploymentToStart = async ({
         environment,
       });
       core.setOutput('deployments', deployments);
+      console.log({ sha, owner, repo, environment })
 
       const deployment =
         deployments.data.length > 0 &&
@@ -231,10 +232,11 @@ const waitForDeploymentToStart = async ({
           return deployment.creator.login === actorName;
         });
       core.setOutput('deployment', deployment);
-      console.log('deployments', deployments)
+      console.log('creator', deployments.data[0].creator.login)
+      console.log('creator stringified', JSON.stringify(deployments.data[0].creator))
+      console.log('deployments', JSON.stringify(deployments, null, 2))
 
       if (deployments.length > 2) {
-        console.log('deployments', deployments)
         return deployments;
       }
 
