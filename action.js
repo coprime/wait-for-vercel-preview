@@ -217,15 +217,17 @@ const waitForDeploymentToStart = async ({
         sha,
         environment,
       });
+      core.setOutput('deployments', deployments);
 
       const deployment =
         deployments.data.length > 0 &&
         deployments.data.find((deployment) => {
           return deployment.creator.login === actorName;
         });
+      core.setOutput('deployment', deployment);
 
-      if (deployment) {
-        return deployment;
+      if (deployments) {
+        return deployments;
       }
 
       console.log(
@@ -320,7 +322,7 @@ const run = async () => {
     }
 
     // Get deployments associated with the pull request.
-    const deployment = await waitForDeploymentToStart({
+    const deployments = await waitForDeploymentToStart({
       octokit,
       owner,
       repo,
@@ -331,15 +333,25 @@ const run = async () => {
       checkIntervalInMilliseconds: CHECK_INTERVAL_IN_MS,
     });
 
-    if (!deployment) {
+    if (!deployments) {
       core.setFailed('no vercel deployment found, exiting...');
       return;
     }
 
-    const status = await waitForStatus({
+
+    const status1 = await waitForStatus({
       owner,
       repo,
-      deployment_id: deployment.id,
+      deployment_id: deployment[0].id,
+      token: GITHUB_TOKEN,
+      maxTimeout: MAX_TIMEOUT,
+      allowInactive: ALLOW_INACTIVE,
+      checkIntervalInMilliseconds: CHECK_INTERVAL_IN_MS,
+    });
+    const status2 = await waitForStatus({
+      owner,
+      repo,
+      deployment_id: deployment[1].id,
       token: GITHUB_TOKEN,
       maxTimeout: MAX_TIMEOUT,
       allowInactive: ALLOW_INACTIVE,
@@ -347,7 +359,8 @@ const run = async () => {
     });
 
     // Get target url
-    const targetUrl = status.target_url;
+    const targetUrl = status1.target_url;
+    const targetUrl2 = status2.target_url;
 
     if (!targetUrl) {
       core.setFailed(`no target_url found in the status check`);
@@ -355,9 +368,11 @@ const run = async () => {
     }
 
     console.log('target url »', targetUrl);
+    console.log('target url2 »', targetUrl2);
 
     // Set output
-    core.setOutput('url', targetUrl);
+    core.setOutput('url 1', targetUrl);
+    core.setOutput('url 2 ', targetUrl2);
 
     // Wait for url to respond with a success
     console.log(`Waiting for a status code 200 from: ${targetUrl}`);
