@@ -365,9 +365,61 @@ const run = async () => {
       checkIntervalInMilliseconds: CHECK_INTERVAL_IN_MS,
     });
 
+    const status3 = await waitForStatus({
+      owner,
+      repo,
+      deployment_id: deployments?.[2]?.id,
+      token: GITHUB_TOKEN,
+      maxTimeout: MAX_TIMEOUT,
+      allowInactive: ALLOW_INACTIVE,
+      checkIntervalInMilliseconds: CHECK_INTERVAL_IN_MS,
+    });
+    const status4 = await waitForStatus({
+      owner,
+      repo,
+      deployment_id: deployments?.[3]?.id,
+      token: GITHUB_TOKEN,
+      maxTimeout: MAX_TIMEOUT,
+      allowInactive: ALLOW_INACTIVE,
+      checkIntervalInMilliseconds: CHECK_INTERVAL_IN_MS,
+    });
+    const status5 = await waitForStatus({
+      owner,
+      repo,
+      deployment_id: deployments?.[4]?.id,
+      token: GITHUB_TOKEN,
+      maxTimeout: MAX_TIMEOUT,
+      allowInactive: ALLOW_INACTIVE,
+      checkIntervalInMilliseconds: CHECK_INTERVAL_IN_MS,
+    });
+    const status6 = await waitForStatus({
+      owner,
+      repo,
+      deployment_id: deployments?.[5]?.id,
+      token: GITHUB_TOKEN,
+      maxTimeout: MAX_TIMEOUT,
+      allowInactive: ALLOW_INACTIVE,
+      checkIntervalInMilliseconds: CHECK_INTERVAL_IN_MS,
+    });
+    const status7 = await waitForStatus({
+      owner,
+      repo,
+      deployment_id: deployments?.[6]?.id,
+      token: GITHUB_TOKEN,
+      maxTimeout: MAX_TIMEOUT,
+      allowInactive: ALLOW_INACTIVE,
+      checkIntervalInMilliseconds: CHECK_INTERVAL_IN_MS,
+    });
+
+
     // Get target url
     const targetUrl = status1.target_url;
     const targetUrl2 = status2.target_url;
+    const targetUrl3 = status3.target_url;
+    const targetUrl4 = status4.target_url;
+    const targetUrl5 = status5.target_url;
+    const targetUrl6 = status6.target_url;
+    const targetUrl7 = status7.target_url;
 
     if (!targetUrl) {
       core.setFailed(`no target_url found in the status check`);
@@ -376,10 +428,20 @@ const run = async () => {
 
     console.log('target url1 »', targetUrl);
     console.log('target url2 »', targetUrl2);
+    console.log('target url3 »', targetUrl3);
+    console.log('target url4 »', targetUrl4);
+    console.log('target url5 »', targetUrl5);
+    console.log('target url6 »', targetUrl6);
+    console.log('target url7 »', targetUrl7);
 
     // Set output
     core.setOutput('url 1', targetUrl);
     core.setOutput('url 2 ', targetUrl2);
+    core.setOutput('url 3 ', targetUrl3);
+    core.setOutput('url 4 ', targetUrl4);
+    core.setOutput('url 5 ', targetUrl5);
+    core.setOutput('url 6 ', targetUrl6);
+    core.setOutput('url 7 ', targetUrl7);
 
     // Wait for url to respond with a success
     console.log(`Waiting for a status code 200 from: ${targetUrl}`);
