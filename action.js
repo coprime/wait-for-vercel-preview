@@ -233,7 +233,7 @@ const waitForDeploymentToStart = async ({
 
       if (vercelDeployments.length > 0) {
         console.log('vercelDeployments', JSON.stringify(vercelDeployments, null, 2))
-        return deployments;
+        return vercelDeployments;
       }
 
       console.log(
@@ -349,7 +349,7 @@ const run = async () => {
     const status1 = await waitForStatus({
       owner,
       repo,
-      deployment_id: deployment[0].id,
+      deployment_id: deployments[0].id,
       token: GITHUB_TOKEN,
       maxTimeout: MAX_TIMEOUT,
       allowInactive: ALLOW_INACTIVE,
@@ -358,7 +358,7 @@ const run = async () => {
     const status2 = await waitForStatus({
       owner,
       repo,
-      deployment_id: deployment[1].id,
+      deployment_id: deployments?.[1]?.id,
       token: GITHUB_TOKEN,
       maxTimeout: MAX_TIMEOUT,
       allowInactive: ALLOW_INACTIVE,
