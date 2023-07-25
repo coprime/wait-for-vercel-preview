@@ -231,6 +231,8 @@ const waitForDeploymentToStart = async ({
         }
       });
       console.log('vercel projects', vercelProjects.data)
+      const hi = vercelProjects.data.map(p => ({ name: p.name, env: p.env, link: p.link, latest: p.latestDeployments, targets: p.targets }))
+      console.log('hi', JSON.stringify(hi))
       if (!hasQueuedDeployments) return vercelDeps.data.deployments.filter(d => d.state !== 'CANCELED').map(d => d.url)
 
       // return vercelDeps.data.deployments;
