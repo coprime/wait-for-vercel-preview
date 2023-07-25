@@ -66,6 +66,7 @@ const waitForUrl = async ({
         );
         console.log(e.message);
       } else {
+        console.log('error url', url)
         console.log(e);
       }
 
@@ -385,15 +386,15 @@ const run = async () => {
     core.setOutput('urls', urls);
 
     console.log('urls', urls)
-    urls.forEach(async (url, i) => {
-     await waitForUrl({
-      url,
-      maxTimeout: MAX_TIMEOUT,
-      checkIntervalInMilliseconds: CHECK_INTERVAL_IN_MS,
-      vercelPassword: VERCEL_PASSWORD,
-      path: PATH,
-    });
-    })
+    // urls.forEach(async (url, i) => {
+    //  await waitForUrl({
+    //   url,
+    //   maxTimeout: MAX_TIMEOUT,
+    //   checkIntervalInMilliseconds: CHECK_INTERVAL_IN_MS,
+    //   vercelPassword: VERCEL_PASSWORD,
+    //   path: PATH,
+    // });
+    // })
 
 
     // const status1 = await waitForStatus({
