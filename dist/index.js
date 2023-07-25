@@ -228,7 +228,7 @@ const waitForDeploymentToStart = async ({
         }
       });
       // console.log('vercelDeps', vercelDeps)
-      console.log('all deployments', vercelDeps.data.deployments)
+      // console.log('all deployments', vercelDeps.data.deployments)
       console.log('apps', vercelDeps.data.deployments.map(d => ({ name: d.name, state: d.state })))
       const hasQueuedDeployments = vercelDeps.data.deployments.some(d => d.state === 'QUEUED')
       const vercelProjects = await axios.get(`https://api.vercel.com/v9/projects?teamId=${VERCEL_TEAM}`, {
@@ -236,7 +236,7 @@ const waitForDeploymentToStart = async ({
           "Authorization": `Bearer ${VERCEL_TOKEN}`
         }
       });
-      console.log('vercel projects', vercelProjects.data)
+      // console.log('vercel projects', vercelProjects.data)
       const hi = vercelProjects.data.map(p => ({ name: p.name, env: p.env, link: p.link, latest: p.latestDeployments, targets: p.targets }))
       console.log('hi', JSON.stringify(hi))
       if (!hasQueuedDeployments) return vercelDeps.data.deployments.filter(d => d.state !== 'CANCELED').map(d => d.url)
