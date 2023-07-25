@@ -40,6 +40,8 @@ const waitForUrl = async ({
       }
 
       let checkUri = new URL(path, url);
+      console.log('checkUri', checkUri)
+      if (!checkUri) return
 
       await axios.get(checkUri.toString(), {
         headers,
