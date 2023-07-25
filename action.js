@@ -361,7 +361,6 @@ const run = async () => {
       core.setFailed('no vercel deployment found, exiting...');
       return;
     }
-    console.log('determined deployments', deployments)
     const targetUrl = ''
     const allUrls = deployments.filter(d => d.state !=='CANCELED').map(d => d.url)
     console.log('allUrls', allUrls)
