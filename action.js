@@ -219,6 +219,7 @@ const waitForDeploymentToStart = async ({
         }
       });
       console.log('vercelDeps', vercelDeps)
+      console.log('data', vercelDeps.data.deployments)
 
     } catch (e) {
       console.error('error in vercel call', e)
