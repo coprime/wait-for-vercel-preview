@@ -46,7 +46,6 @@ const waitForUrl = async ({
       }
 
       let checkUri = new URL(path, url);
-      console.log('checkUri', checkUri)
       if (!checkUri) return
 
       await axios.get(checkUri.toString(), {
@@ -263,6 +262,7 @@ const run = async () => {
       core.setFailed('no vercel deployment found, exiting...');
       return;
     }
+    console.log('urls', urls)
     core.setOutput('urls', urls);
 
     urls.map(d=> d.url).forEach(async (url, i) => {
