@@ -227,7 +227,7 @@ const waitForDeploymentToStart = async ({
           "Authorization": `Bearer ${VERCEL_TOKEN}`
         }
       });
-      // console.log('vercelDeps', vercelDeps)
+      console.log({ sha, owner, repo, environment})
       // console.log('all deployments', vercelDeps.data.deployments)
       console.log('apps', vercelDeps.data.deployments.map(d => ({ name: d.name, state: d.state })))
       const hasQueuedDeployments = vercelDeps.data.deployments.some(d => d.state === 'QUEUED')
@@ -244,7 +244,6 @@ const waitForDeploymentToStart = async ({
       const latestLinks = latestDeployments.map(project => project.map(d => ({ url: d.url, name: d.name })))
       // console.log('urls', urls)
       console.log('stringified urls', JSON.stringify(latestDeployments, null, 2))
-      console.log('targets', JSON.stringify(targets, null, 2))
       console.log('latestlinks', JSON.stringify(latestLinks, null, 2))
       if (!hasQueuedDeployments) return vercelDeps.data.deployments.filter(d => d.state !== 'CANCELED').map(d => d.url)
 
