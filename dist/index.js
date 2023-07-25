@@ -230,7 +230,7 @@ const waitForDeploymentToStart = async ({
       console.log({ sha, owner, repo, environment})
       // console.log('all deployments', vercelDeps.data.deployments)
       console.log('apps', vercelDeps.data.deployments.map(d => ({ name: d.name, state: d.state })))
-      const hasQueuedDeployments = vercelDeps.data.deployments.some(d => d.state === 'QUEUED')
+      const hasQueuedDeployments = vercelDeps.data.deployments.some(d => d.state === 'QUEUED' || d.state === 'BUILDING' || d.state === 'INITIALIZING')
       const vercelProjects = await axios.get(`https://api.vercel.com/v9/projects?teamId=${VERCEL_TEAM}`, {
         headers: {
           "Authorization": `Bearer ${VERCEL_TOKEN}`
