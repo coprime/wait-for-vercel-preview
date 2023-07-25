@@ -211,7 +211,7 @@ const waitForDeploymentToStart = async ({
   environment,
   actorName = 'vercel[bot]',
   maxTimeout = 20,
-  checkIntervalInMilliseconds = 10000,
+  checkIntervalInMilliseconds = 2000,
   VERCEL_TOKEN
 }) => {
   const iterations = calculateIterations(
@@ -244,7 +244,7 @@ const waitForDeploymentToStart = async ({
         projectDeployments.forEach(deployment => {
           if (deployment.meta.githubCommitSha === sha) {
             const toAdd = {
-              url: deployment.url,
+              url: deployment.automaticAliases[0],
               name: deployment.name,
             }
             finalLinks.push(toAdd)
@@ -254,7 +254,7 @@ const waitForDeploymentToStart = async ({
       })
       // const latestLinks = latestDeployments.map(project => project.map(d => ({ url: d.url, name: d.name })))
       // console.log('urls', urls)
-      console.log('all latest deployments', JSON.stringify(latestDeployments, null, 2))
+      // console.log('all latest deployments', JSON.stringify(latestDeployments, null, 2))
       console.log('final links', JSON.stringify(finalLinks, null, 2))
       if (!hasQueuedDeployments) return finalLinks
 
