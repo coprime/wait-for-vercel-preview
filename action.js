@@ -238,8 +238,8 @@ const waitForDeploymentToStart = async ({
         projectDeployments.forEach(deployment => {
           if (deployment.meta.githubCommitSha === sha) {
             const toAdd = {
-              url: item.url,
-              name: item.name,
+              url: deployment.url,
+              name: deployment.name,
             }
             finalLinks.push(toAdd)
           }
