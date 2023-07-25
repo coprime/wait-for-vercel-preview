@@ -222,7 +222,6 @@ const waitForDeploymentToStart = async ({
         }
       });
       console.log({ sha, owner, repo, environment})
-      // console.log('all deployments', vercelDeps.data.deployments)
       console.log('apps', vercelDeps.data.deployments.map(d => ({ name: d.name, state: d.state })))
       const hasQueuedDeployments = vercelDeps.data.deployments.some(d => d.state === 'QUEUED' || d.state === 'BUILDING' || d.state === 'INITIALIZING')
       const vercelProjects = await axios.get(`https://api.vercel.com/v9/projects?teamId=${VERCEL_TEAM}`, {
@@ -230,8 +229,6 @@ const waitForDeploymentToStart = async ({
           "Authorization": `Bearer ${VERCEL_TOKEN}`
         }
       });
-      // console.log('vercel projects', vercelProjects.data)
-      const hi = vercelProjects.data.projects.map(p => ({ name: p.name, env: p.env, link: p.link, latest: p.latestDeployments, targets: p.targets }))
       const latestDeployments = vercelProjects.data.projects.map(d => d.latestDeployments)
       const finalLinks = []
       latestDeployments.forEach(projectDeployments => {
@@ -246,10 +243,6 @@ const waitForDeploymentToStart = async ({
         })
         return false
       })
-      // const latestLinks = latestDeployments.map(project => project.map(d => ({ url: d.url, name: d.name })))
-      // console.log('urls', urls)
-      // console.log('all latest deployments', JSON.stringify(latestDeployments, null, 2))
-      console.log('final links', JSON.stringify(finalLinks, null, 2))
       if (!hasQueuedDeployments) return finalLinks
 
     } catch (e) {
@@ -366,43 +359,6 @@ const run = async () => {
     });
     })
 
-
-    // const status1 = await waitForStatus({
-    //   owner,
-    //   repo,
-    //   deployment_id: deployments[0].uid,
-    //   token: GITHUB_TOKEN,
-    //   maxTimeout: MAX_TIMEOUT,
-    //   allowInactive: ALLOW_INACTIVE,
-    //   checkIntervalInMilliseconds: CHECK_INTERVAL_IN_MS,
-    // });
-
-
-
-    // Get target url
-    // const targetUrl = status1.target_url;
-
-    // if (!targetUrl) {
-    //   core.setFailed(`no target_url found in the status check`);
-    //   return;
-    // }
-
-    // console.log('target url1 »', targetUrl);
-
-
-    // Set output
-    // core.setOutput('url 1', targetUrl);
-
-    // Wait for url to respond with a success
-    // console.log(`Waiting for a status code 200 from: ${targetUrl}`);
-
-    // await waitForUrl({
-    //   url: targetUrl,
-    //   maxTimeout: MAX_TIMEOUT,
-    //   checkIntervalInMilliseconds: CHECK_INTERVAL_IN_MS,
-    //   vercelPassword: VERCEL_PASSWORD,
-    //   path: PATH,
-    // });
   } catch (error) {
     core.setFailed(error.message);
   }
