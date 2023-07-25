@@ -224,54 +224,55 @@ const waitForDeploymentToStart = async ({
           "Authorization": `Bearer ${VERCEL_TOKEN}`
         }
       });
-      console.log('vercelDeps', vercelDeps)
-      console.log('data', vercelDeps.data.deployments)
-      console.log('apps', vercelDeps.data.deployments.map(d => ({ name: d.name, state: d.state  })))
-      return vercelDeps.data.deployments;
+      // console.log('vercelDeps', vercelDeps)
+      // console.log('data', vercelDeps.data.deployments)
+      console.log('apps', vercelDeps.data.deployments.map(d => ({ name: d.name, state: d.state })))
+
+      // return vercelDeps.data.deployments;
 
     } catch (e) {
       console.error('error in vercel call', e)
     }
-    try {
-      const deployments = await octokit.rest.repos.listDeployments({
-        owner,
-        repo,
-        sha,
-        environment,
-      });
-      core.setOutput('deployments', deployments);
-      console.log({ sha, owner, repo, environment })
-      console.log('all deployments', deployments)
+  //   try {
+  //     const deployments = await octokit.rest.repos.listDeployments({
+  //       owner,
+  //       repo,
+  //       sha,
+  //       environment,
+  //     });
+  //     core.setOutput('deployments', deployments);
+  //     // console.log({ sha, owner, repo, environment })
+  //     console.log('all deployments', deployments)
 
-      const vercelDeployments =
-        deployments.data.length > 0 &&
-        deployments.data.filter((deployment) => {
-          return deployment.creator.login === actorName;
-        });
-      core.setOutput('deployment', vercelDeployments);
-      // console.log('creator', deployments.data?.[0]?.creator?.login)
-      // console.log('creator stringified', JSON.stringify(deployments?.data?.[0]?.creator))
-      console.log('vercelDeployments', JSON.stringify(vercelDeployments, null, 2))
+  //     const vercelDeployments =
+  //       deployments.data.length > 0 &&
+  //       deployments.data.filter((deployment) => {
+  //         return deployment.creator.login === actorName;
+  //       });
+  //     core.setOutput('deployment', vercelDeployments);
+  //     // console.log('creator', deployments.data?.[0]?.creator?.login)
+  //     // console.log('creator stringified', JSON.stringify(deployments?.data?.[0]?.creator))
+  //     console.log('vercelDeployments', JSON.stringify(vercelDeployments, null, 2))
 
-      if (vercelDeployments.length > 0) {
-        console.log('vercelDeployments', JSON.stringify(vercelDeployments, null, 2))
-        return vercelDeployments;
-      }
+  //     if (vercelDeployments.length > 0) {
+  //       console.log('vercelDeployments', JSON.stringify(vercelDeployments, null, 2))
+  //       return vercelDeployments;
+  //     }
 
-      console.log(
-        `Could not find any jareds for actor ${actorName}, retrying (attempt ${
-          i + 1
-        } / ${iterations})`
-      );
-    } catch(e) {
-      console.log(
-        `Error while fetching deployments, retrying (attempt ${
-          i + 1
-        } / ${iterations})`
-      );
+  //     console.log(
+  //       `Could not find any jareds for actor ${actorName}, retrying (attempt ${
+  //         i + 1
+  //       } / ${iterations})`
+  //     );
+  //   } catch(e) {
+  //     console.log(
+  //       `Error while fetching deployments, retrying (attempt ${
+  //         i + 1
+  //       } / ${iterations})`
+  //     );
 
-      console.error(e)
-    }
+  //     console.error(e)
+  //   }
 
     await wait(checkIntervalInMilliseconds);
   }
