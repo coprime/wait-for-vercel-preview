@@ -233,59 +233,28 @@ const waitForDeploymentToStart = async ({
       // console.log('vercel projects', vercelProjects.data)
       const hi = vercelProjects.data.projects.map(p => ({ name: p.name, env: p.env, link: p.link, latest: p.latestDeployments, targets: p.targets }))
       const latestDeployments = vercelProjects.data.projects.map(d => d.latestDeployments)
-      const targets = vercelProjects.data.projects.map(d => d.targets)
-      const links = vercelProjects.data.projects.map(d => d.targets)
-      const latestLinks = latestDeployments.map(project => project.map(d => ({ url: d.url, name: d.name })))
+      const finalLinks = []
+      latestDeployments.forEach(projectDeployments => {
+        projectDeployments.forEach(deployment => {
+          if (deployment.meta.githubCommitSha === sha) {
+            const toAdd = {
+              url: item.url,
+              name: item.name,
+            }
+            finalLinks.push(toAdd)
+          }
+        })
+        return false
+      })
+      // const latestLinks = latestDeployments.map(project => project.map(d => ({ url: d.url, name: d.name })))
       // console.log('urls', urls)
-      console.log('stringified urls', JSON.stringify(latestDeployments, null, 2))
-      console.log('latestlinks', JSON.stringify(latestLinks, null, 2))
-      if (!hasQueuedDeployments) return vercelDeps.data.deployments.filter(d => d.state !== 'CANCELED').map(d => d.url)
-
-      // return vercelDeps.data.deployments;
+      console.log('all latest deployments', JSON.stringify(latestDeployments, null, 2))
+      console.log('final links', JSON.stringify(finalLinks, null, 2))
+      if (!hasQueuedDeployments) return finalLinks
 
     } catch (e) {
       console.error('error in vercel call', e)
     }
-  //   try {
-  //     const deployments = await octokit.rest.repos.listDeployments({
-  //       owner,
-  //       repo,
-  //       sha,
-  //       environment,
-  //     });
-  //     core.setOutput('deployments', deployments);
-  //     // console.log({ sha, owner, repo, environment })
-  //     console.log('all deployments', deployments)
-
-  //     const vercelDeployments =
-  //       deployments.data.length > 0 &&
-  //       deployments.data.filter((deployment) => {
-  //         return deployment.creator.login === actorName;
-  //       });
-  //     core.setOutput('deployment', vercelDeployments);
-  //     // console.log('creator', deployments.data?.[0]?.creator?.login)
-  //     // console.log('creator stringified', JSON.stringify(deployments?.data?.[0]?.creator))
-  //     console.log('vercelDeployments', JSON.stringify(vercelDeployments, null, 2))
-
-  //     if (vercelDeployments.length > 0) {
-  //       console.log('vercelDeployments', JSON.stringify(vercelDeployments, null, 2))
-  //       return vercelDeployments;
-  //     }
-
-  //     console.log(
-  //       `Could not find any jareds for actor ${actorName}, retrying (attempt ${
-  //         i + 1
-  //       } / ${iterations})`
-  //     );
-  //   } catch(e) {
-  //     console.log(
-  //       `Error while fetching deployments, retrying (attempt ${
-  //         i + 1
-  //       } / ${iterations})`
-  //     );
-
-  //     console.error(e)
-  //   }
 
     await wait(checkIntervalInMilliseconds);
   }
@@ -333,9 +302,8 @@ const run = async () => {
       (Number(core.getInput('check_interval')) || 2) * 1000;
 
     // Fail if we have don't have a github token
-    if (!GITHUB_TOKEN) {
-      core.setFailed('Required field `token` was not provided');
-    }
+    if (!GITHUB_TOKEN) core.setFailed('Required field `token` was not provided');
+    if (!VERCEL_TOKEN) core.setFailed('Required field `vercel_token` was not provided');
 
     const octokit = github.getOctokit(GITHUB_TOKEN);
 
