@@ -117,77 +117,6 @@ const getPassword = async ({ url, vercelPassword }) => {
   return vercelJwtCookie.value;
 };
 
-const waitForStatus = async ({
-  token,
-  owner,
-  repo,
-  deployment_id,
-  maxTimeout,
-  allowInactive,
-  checkIntervalInMilliseconds,
-}) => {
-  const octokit = new github.getOctokit(token);
-  const iterations = calculateIterations(
-    maxTimeout,
-    checkIntervalInMilliseconds
-  );
-
-  for (let i = 0; i < iterations; i++) {
-    try {
-      const statuses = await octokit.rest.repos.listDeploymentStatuses({
-        owner,
-        repo,
-        deployment_id,
-      });
-
-      const status = statuses.data.length > 0 && statuses.data[0];
-
-      if (!status) {
-        throw new StatusError('No status was available');
-      }
-
-      if (status && allowInactive === true && status.state === 'inactive') {
-        return status;
-      }
-
-      if (status && status.state !== 'success') {
-        throw new StatusError('No status with state "success" was available');
-      }
-
-      if (status && status.state === 'success') {
-        return status;
-      }
-
-      throw new StatusError('Unknown status error');
-    } catch (e) {
-      console.log(
-        `Deployment unavailable or not successful, retrying (attempt ${
-          i + 1
-        } / ${iterations})`
-      );
-      if (e instanceof StatusError) {
-        if (e.message.includes('No status with state "success"')) {
-          // TODO: does anything actually need to be logged in this case?
-        } else {
-          console.log(e.message);
-        }
-      } else {
-        console.log(e);
-      }
-      await wait(checkIntervalInMilliseconds);
-    }
-  }
-  core.setFailed(
-    `Timeout reached: Unable to wait for an deployment to be successful`
-  );
-};
-
-class StatusError extends Error {
-  constructor(message) {
-    super(message);
-  }
-}
-
 /**
  * Waits until the github API returns a deployment for
  * a given actor.
@@ -198,12 +127,7 @@ class StatusError extends Error {
  * @returns
  */
 const waitForDeploymentToStart = async ({
-  octokit,
-  owner,
-  repo,
   sha,
-  environment,
-  actorName = 'vercel[bot]',
   maxTimeout = 20,
   checkIntervalInMilliseconds = 2000,
   VERCEL_TOKEN
@@ -216,19 +140,13 @@ const waitForDeploymentToStart = async ({
   const VERCEL_TEAM = 'coprime'
   for (let i = 0; i < iterations; i++) {
     try {
-      const vercelDeps = await axios.get(`https://api.vercel.com/v6/deployments?teamId=${VERCEL_TEAM}`, {
-        headers: {
-          "Authorization": `Bearer ${VERCEL_TOKEN}`
-        }
-      });
-      console.log({ sha, owner, repo, environment})
-      console.log('apps', vercelDeps.data.deployments.map(d => ({ name: d.name, state: d.state })))
+      const headers = {
+        "Authorization": `Bearer ${VERCEL_TOKEN}`
+      }
+      const vercelDeps = await axios.get(`https://api.vercel.com/v6/deployments?teamId=${VERCEL_TEAM}`, { headers });
       const hasQueuedDeployments = vercelDeps.data.deployments.some(d => d.state === 'QUEUED' || d.state === 'BUILDING' || d.state === 'INITIALIZING')
-      const vercelProjects = await axios.get(`https://api.vercel.com/v9/projects?teamId=${VERCEL_TEAM}`, {
-        headers: {
-          "Authorization": `Bearer ${VERCEL_TOKEN}`
-        }
-      });
+      const queuedDeployments = vercelDeps.data.deployments.filter(d => d.state === 'QUEUED' || d.state === 'BUILDING' || d.state === 'INITIALIZING')
+      const vercelProjects = await axios.get(`https://api.vercel.com/v9/projects?teamId=${VERCEL_TEAM}`, { headers });
       const latestDeployments = vercelProjects.data.projects.map(d => d.latestDeployments)
       const finalLinks = []
       latestDeployments.forEach(projectDeployments => {
@@ -241,10 +159,12 @@ const waitForDeploymentToStart = async ({
             finalLinks.push(toAdd)
           }
         })
-        return false
       })
       if (!hasQueuedDeployments) return finalLinks
-
+      else {
+        console.log(`waiting for Vercel to finish deploying...still need to deploy ${queuedDeployments.map(d => d.name).join(', ')}`)
+        await wait(checkIntervalInMilliseconds);
+      }
     } catch (e) {
       console.error('error in vercel call', e)
     }
@@ -326,29 +246,19 @@ const run = async () => {
     }
 
     // Get deployments associated with the pull request.
-    const deployments = await waitForDeploymentToStart({
-      octokit,
-      owner,
-      repo,
+    const urls = await waitForDeploymentToStart({
       sha,
-      environment: ENVIRONMENT,
-      actorName: 'vercel[bot]',
       maxTimeout: MAX_TIMEOUT,
       checkIntervalInMilliseconds: CHECK_INTERVAL_IN_MS,
       VERCEL_TOKEN,
     });
 
-    if (!deployments) {
+    if (!urls) {
       core.setFailed('no vercel deployment found, exiting...');
       return;
     }
-    const targetUrl = ''
-    // const allUrls = deployments.filter(d => d.state !=='CANCELED').map(d => d.url)
-    // console.log('allUrls', allUrls)
-    const urls = deployments
     core.setOutput('urls', urls);
 
-    console.log('urls', urls)
     urls.map(d=> d.url).forEach(async (url, i) => {
      await waitForUrl({
       url: `https://${url}`,
