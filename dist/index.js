@@ -364,7 +364,7 @@ const run = async () => {
     console.log('urls', urls)
     urls.map(d=> d.url).forEach(async (url, i) => {
      await waitForUrl({
-      url,
+      url: `https://${url}`,
       maxTimeout: MAX_TIMEOUT,
       checkIntervalInMilliseconds: CHECK_INTERVAL_IN_MS,
       vercelPassword: VERCEL_PASSWORD,
