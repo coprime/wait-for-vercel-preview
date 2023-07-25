@@ -219,8 +219,10 @@ const waitForDeploymentToStart = async ({
         }
       });
       // console.log('vercelDeps', vercelDeps)
-      // console.log('data', vercelDeps.data.deployments)
+      console.log('all deployments', vercelDeps.data.deployments)
       console.log('apps', vercelDeps.data.deployments.map(d => ({ name: d.name, state: d.state })))
+      const hasQueuedDeployments = vercelDeps.data.deployments.some(d => d.state === 'QUEUED')
+      if (!hasQueuedDeployments) return vercelDeps.data.deployments.filter(d => d.state !== 'CANCELED').map(d => d.url)
 
       // return vercelDeps.data.deployments;
 
@@ -363,8 +365,21 @@ const run = async () => {
       return;
     }
     const targetUrl = ''
-    const allUrls = deployments.filter(d => d.state !=='CANCELED').map(d => d.url)
-    console.log('allUrls', allUrls)
+    // const allUrls = deployments.filter(d => d.state !=='CANCELED').map(d => d.url)
+    // console.log('allUrls', allUrls)
+    const urls = deployments
+    core.setOutput('urls', urls);
+
+    console.log('urls', urls)
+    urls.forEach(async (url, i) => {
+     await waitForUrl({
+      url,
+      maxTimeout: MAX_TIMEOUT,
+      checkIntervalInMilliseconds: CHECK_INTERVAL_IN_MS,
+      vercelPassword: VERCEL_PASSWORD,
+      path: PATH,
+    });
+    })
 
 
     // const status1 = await waitForStatus({
