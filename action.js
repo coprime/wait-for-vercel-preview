@@ -205,7 +205,7 @@ const waitForDeploymentToStart = async ({
   environment,
   actorName = 'vercel[bot]',
   maxTimeout = 20,
-  checkIntervalInMilliseconds = 2000,
+  checkIntervalInMilliseconds = 10000,
   VERCEL_TOKEN
 }) => {
   const iterations = calculateIterations(
