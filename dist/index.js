@@ -168,7 +168,7 @@ const waitForDeploymentToStart = async ({
       })
       if (!hasQueuedDeployments) return finalLinks
       else {
-        console.log(`waiting for Vercel to finish deploying...still need to deploy ${queuedDeployments.map(d => d.name).join(', ')}`)
+        console.log(`Still deploying ${queuedDeployments.map(d => d.name).join(', ')}`)
         await wait(checkIntervalInMilliseconds);
       }
     } catch (e) {
@@ -214,7 +214,7 @@ const run = async () => {
     const VERCEL_PASSWORD = core.getInput('vercel_password');
     const VERCEL_TOKEN = core.getInput('vercel_token');
     const ENVIRONMENT = core.getInput('environment');
-    const MAX_TIMEOUT = Number(core.getInput('max_timeout')) || 60;
+    const MAX_TIMEOUT = Number(core.getInput('max_timeout')) || 720;
     const ALLOW_INACTIVE = Boolean(core.getInput('allow_inactive')) || false;
     const PATH = core.getInput('path') || '/';
     const CHECK_INTERVAL_IN_MS =
