@@ -226,6 +226,8 @@ const waitForDeploymentToStart = async ({
       });
       console.log('vercelDeps', vercelDeps)
       console.log('data', vercelDeps.data.deployments)
+      console.log('apps', vercelDeps.data.deployments.map(d => ({ name: d.name, state: d.state  })))
+      return vercelDeps.data.deployments;
 
     } catch (e) {
       console.error('error in vercel call', e)
@@ -323,15 +325,6 @@ const run = async () => {
 
     const octokit = github.getOctokit(GITHUB_TOKEN);
 
-    // const orgName = 'coprime'
-    // const VERCEL_TOKEN = await octokit.request(`GET /orgs/${orgName}/actions/secrets/VERCEL_TOKEN`, {
-    //   org: 'ORG',
-    //   secret_name: 'VERCEL_TOKEN',
-    //   headers: {
-    //     'X-GitHub-Api-Version': '2022-11-28'
-    //   }
-    // })
-
     const context = github.context;
     const owner = context.repo.owner;
     const repo = context.repo.repo;
@@ -376,12 +369,14 @@ const run = async () => {
     }
     console.log('determined deployments', deployments)
     const targetUrl = ''
+    const allUrls = deployments.filter(d => d.state !=='CANCELED').map(d => d.url)
+    console.log('allUrls', allUrls)
 
 
     // const status1 = await waitForStatus({
     //   owner,
     //   repo,
-    //   deployment_id: deployments[0].id,
+    //   deployment_id: deployments[0].uid,
     //   token: GITHUB_TOKEN,
     //   maxTimeout: MAX_TIMEOUT,
     //   allowInactive: ALLOW_INACTIVE,
